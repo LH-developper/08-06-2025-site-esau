@@ -1,5 +1,6 @@
 import ClientLayout from './ClientLayout'
 import './globals.css'
+import Script from 'next/script'
 
 export const metadata = {
   title: 'BotExpert',
@@ -9,6 +10,28 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
+      <head>
+        <Script
+          id="chatbase-init"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                if ((!window.chatbase || window.chatbase("getState") !== "initialized")) {
+                  window.chatbase = (...args) => {
+                    if (!window.chatbase.q) window.chatbase.q = [];
+                    window.chatbase.q.push(args);
+                  };
+                }
+              })();
+            `,
+          }}
+        />
+        <Script
+          src="https://www.chatbase.co/embed.min.js"
+          strategy="afterInteractive"
+        />
+      </head>
       <body>
         <ClientLayout>
           {children}

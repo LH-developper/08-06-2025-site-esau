@@ -1,41 +1,20 @@
 'use client';
 
 import { useEffect } from "react";
-import Script from "next/script";
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
   useEffect(() => {
-    console.log("Client component mounted");
+    const script = document.createElement("script");
+    script.src = "https://www.chatbase.co/embed.min.js";
+    script.defer = true;
+    script.setAttribute("chatbotId", "dogqc3KRy9ulAk6FKPNFg"); // Mets ici le bon ID Chatbase
+    script.setAttribute("domain", "www.chatbase.co");
+    document.body.appendChild(script);
+
+    return () => {
+      document.body.removeChild(script);
+    };
   }, []);
 
-  return (
-    <>
-      {/* Script d'initialisation Chatbase */}
-      <Script
-        id="chatbase-init"
-        strategy="afterInteractive"
-        dangerouslySetInnerHTML={{
-          __html: `
-            (function() {
-              if ((!window.chatbase || window.chatbase("getState") !== "initialized")) {
-                window.chatbase = (...args) => {
-                  if (!window.chatbase.q) window.chatbase.q = [];
-                  window.chatbase.q.push(args);
-                };
-              }
-            })();
-          `,
-        }}
-      />
-
-      {/* Chargement du widget Chatbase */}
-      <Script
-        src="https://www.chatbase.co/embed.min.js"
-        strategy="afterInteractive"
-      />
-
-      {/* Contenu du site */}
-      {children}
-    </>
-  );
+  return <>{children}</>;
 }
